@@ -5,7 +5,11 @@ const app = express();
 const tourRouter = require("./src/Routes/tourRoute");
 const userRouter = require("./src/Routes/userRoute");
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
-app.use(morgan("dev"));
+// run morgan logging only if the app is on developement server.
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
 app.use(express.json());
 
 // Router middleware

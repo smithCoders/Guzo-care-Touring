@@ -1,6 +1,6 @@
 const errorHandler = (err, req, res, next) => {
   // Log the error for debugging purposes
-  console.error(err);
+  console.log(err.message);
 
   // Set a default error status code and message
   let statusCode = 500;

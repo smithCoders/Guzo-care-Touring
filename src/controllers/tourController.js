@@ -1,19 +1,42 @@
+const Tour = require("../Model/tourModel");
 exports.getAllTours = async (req, res) => {
   try {
-    // get all  tour data from DB
-    const tourList = await Tour.find({});
+    // Build Query
+
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "limit", "sort", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // 1. Advanced Filtering
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`
+    );
+
+    let query = Tour.find(JSON.parse(queryString));
+    // SORTING
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    }
+    const tourList = await query;
+
     if (!tourList || tourList.length === 0) {
       return res.status(404).json({ error: "Tour not found" });
     }
-    // send sucess  response  with list of tour
-    res.status(200).json({ status: true, data: { tourList } });
+    // Send success response with the list of tours
+    res
+      .status(200)
+      .json({ status: true, result: tourList.length, data: { tourList } });
   } catch (error) {
-    // log the error to the console
+    // Log the error to the console
     console.log(error);
-    // send error  response
+    // Send error response
     res.status(500).json({ error: error.message });
   }
 };
+
 exports.getSingleTour = async (req, res) => {
   try {
     // get single tour from DB
