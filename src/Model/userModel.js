@@ -19,33 +19,53 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
+    default: "user",
   },
   password: {
     type: String,
-    required: [true, "Please provide your password"],
-    minLength: 8,
+    required: [
+      function () {
+        // Validation function: only require during new document creation or if the field is explicitly set
+        return this.isNew || this.isModified("password");
+      },
+      "Please provide your password",
+    ],
+    minLength: [8, "your password should be grater than 7 characters"],
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Please confirm your password"],
+    required: [
+      function () {
+        // Require passwordConfirm if password is explicitly being set
+        return this.isModified("password");
+      },
+      "Please confirm your password",
+    ],
     validate: {
       validator: function (el) {
-        return el === this.password;
+        return !this.isNew || el === this.password;
       },
       message: "Passwords do not match",
     },
+    // ...
   },
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    deafult: true,
+    select: false,
+  },
 });
 
 // Password encryption middleware
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+  if (!this.isModified("password")) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+
   try {
     this.password = await bcrypt.hash(this.password, 12);
     this.passwordConfirm = undefined;
@@ -54,19 +74,28 @@ userSchema.pre("save", async function (next) {
     return next(err);
   }
 });
-
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+});
 // Password comparison method for authentication
-userSchema.methods.correctPassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
-
+// QUERY-PARAMS=>used to make the userModel insync.
+userSchema.pre(/^find/, function (next) {
+  //   /^find/====>  this find all query start  with  find
+  // this points to the current query.
+  this.find({ active: { $ne: false } });
+  next();
+});
 // Check if the password was changed after a certain timestamp
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000);
     return JWTTimestamp < changedTimestamp;
   }
   return false;
@@ -79,8 +108,8 @@ userSchema.methods.createPasswordResetGenerator = function () {
     .update(resetToken)
     .digest("hex");
   // 10min=10*60s*1000ms
-  this.passwordResetExpires = Date.now() * 10 * 60 * 1000;
-  console.log({ resetToken }, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 20 * 60 * 1000;
+  console.log({ resetToken }, this.passwordResetExpires);
   return resetToken;
 };
 const User = mongoose.model("User", userSchema);

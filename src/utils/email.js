@@ -21,7 +21,7 @@ const sendEmail = catchAsync(async (options) => {
     from: "Abbajifar Touring<hello@AbbajifarTour.io>",
     to: options.email,
     subject: options.subject,
-    text: options.text,
+    text: options.message,
   };
   // 3.snd the email.
   await transport.sendMail(mailOPtions);

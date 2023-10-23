@@ -5,6 +5,7 @@ dotenv.config({ path: "./src/configs/.env" });
 // N.B we  only require app  file  ater we  finished  configuring the  environment variables.
 process.on("uncaughtException", (err) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
+  console.error(err);
   console.log(err.name, err.message);
   process.exit(1);
 });
@@ -26,5 +27,6 @@ app.listen(port, () => {
 process.on("unhandledRejection", (err) => {
   console.log("UNHANDLED REJECTION! 💥 Shutting down...");
   console.log(err.name, err.message);
+  console.error(err);
   process.exit(1);
 });
