@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+// const User = require("./userModel");
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -61,6 +61,26 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: { type: Boolean, default: false },
+    // Geospatail locations
+    startLocation: {
+      // GeoJSON=
+      type: { type: String, default: "point" },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: { type: String, default: "point" },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        // day of tour=>people travel
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
   {
     // used to show virtual property in  output
@@ -72,9 +92,27 @@ const tourSchema = new mongoose.Schema(
   //   timestamps: true,
   // }
 );
+// QUERY MIDDLEWARE.
+// tourSchema.pre("save", async function (next) {
+//   const guidePromise = this.guides.map(async (id) => await User.findById(id));
+//   // await all promises.
+//   this.guides = await Promise.all(guidePromise);
+
+//   next();
+// });
+tourSchema.pre(/^find/, function (next) {
+  this.populate({ path: "guides", select: "-__v -passwordChangedAt" });
+  next();
+});
 // VIRTUAL-property.
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
+});
+// VIRTUAL POPULATE.
+tourSchema.virtual("review", {
+  ref: "Reviews",
+  localField: "_id",
+  foreignField: "tour",
 });
 const Tour = mongoose.model("Tour", tourSchema);
 

@@ -28,8 +28,8 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getSingleTour = catchAsync(async (req, res, next) => {
-  // get single tour from DB
-  const tour = await Tour.findById(req.params.id);
+  // get single tour from DB  and populate the buide field from the DB.
+  const tour = await Tour.findById(req.params.id).populate("review");
   // check the avalaibility of the tour
   if (!tour) {
     return next(new appError("Tour not found ", 404));
