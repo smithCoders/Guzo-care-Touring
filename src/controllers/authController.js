@@ -66,13 +66,12 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // 2) check if user exist and password is correct.
-  //   used to  find user with his email and passord(but the password is exported implicitly  without sedning to client)
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new appError("incorrect email or password", 401));
   }
-  console.log(user);
+
 
   createSendToken(user, 200, res);
 });
@@ -100,7 +99,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!currentUser) {
     return next(
       new appError(
-        "The user belonging to this token does no longer exist.",
+        "The user belonging to this token  no longer exist.",
         401
       )
     );
@@ -116,7 +115,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
-// we wrape the middleware  with, another  function ,sicne we want  to pass wole of  the registered man, and middlewares doesn't accept any arguments.
+// we wrape the middleware  with, another  function ,sicne we want  to pass whole of  the registered man, and middlewares doesn't accept any arguments.
 
 exports.restrcitedTo = function (...roles) {
   return function (req, res, next) {

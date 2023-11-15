@@ -39,6 +39,7 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, "tour must have diffculty"],
+      enum:{values:["easy","medium","diffcult"], message:"diffculy is either easy, medium, diffcult"}
     },
     description: {
       type: String,
@@ -65,14 +66,15 @@ const tourSchema = new mongoose.Schema(
     // Geospatail locations
     startLocation: {
       // GeoJSON=
-      type: { type: String, default: "point" },
+      type: { type: String, default: "point", enum:["point"] },
+      // coordinates===lat, long
       coordinates: [Number],
       address: String,
       description: String,
     },
     locations: [
       {
-        type: { type: String, default: "point" },
+        type: { type: String, default: "point", enum:["point"] },
         coordinates: [Number],
         address: String,
         description: String,

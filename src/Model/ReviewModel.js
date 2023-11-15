@@ -5,7 +5,7 @@ const reviewSchema = Schema(
     review: { type: String, required: [true, "tour must have review"] },
 
     rating: { type: Number, min: 1, max: 5 },
-    createdAt: { type: Date, deafult: Date.now() },
+    createdAt: { type: Date, deafult: Date.now },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -23,7 +23,7 @@ const reviewSchema = Schema(
 );
 // pre saved middleware.
 reviewSchema.pre(/^find/, async function (next) {
-  this.populate({ path: "user", select: "name photo" });
+  this.populate({ path: "user", select: "name photo" }).this.populate({path:"tour", select:"name"})
   next();
 });
 

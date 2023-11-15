@@ -2,7 +2,7 @@ const Review = require("../Model/ReviewModel");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getAllReview = catchAsync(async (req, res, next) => {
-  const reviewsList = await Review.find({});
+  const reviewsList = await Review.find().select("-__v")
   if (!reviewsList || reviewsList.length === 0) {
     res.status(400).json({ status: "failed", error: "review isn't found" });
   }

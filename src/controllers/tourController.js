@@ -29,7 +29,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 exports.getSingleTour = catchAsync(async (req, res, next) => {
   // get single tour from DB  and populate the buide field from the DB.
-  const tour = await Tour.findById(req.params.id).populate("review");
+  const tour = await Tour.findById(req.params.id)
   // check the avalaibility of the tour
   if (!tour) {
     return next(new appError("Tour not found ", 404));
@@ -39,11 +39,10 @@ exports.getSingleTour = catchAsync(async (req, res, next) => {
 });
 
 exports.createTour = catchAsync(async (req, res, next) => {
-  // create tour to the DB
-  const newTour = await Tour.create(req.body);
-  // send sucess response with the  newly created tour
+   const newTour = await Tour.create(req.body);
   res.status(201).json({ status: "sucess", data: { newTour } });
-});
+  })
+
 exports.updateTour = catchAsync(async (req, res) => {
   // property user can updates
   const allowedUpdates = [
@@ -58,6 +57,7 @@ exports.updateTour = catchAsync(async (req, res) => {
     "images",
     "startDates",
     "difficulty",
+    "guides"
   ];
   const updates = Object.keys(req.body);
   const isValid = updates.every((update) => allowedUpdates.includes(update));
