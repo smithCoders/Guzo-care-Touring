@@ -2,48 +2,14 @@ const Tour = require("../Model/tourModel");
 const API_FEATURE = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appErrors");
+const factory=require("./handlerFactory")
 exports.aliasTopTours = async (req, res, next) => {
   req.query.limit = "5";
   req.query.sort = "price ratingsAverage";
   req.query.fields = "name price ratingsAverage summary difficulty";
   next();
 };
-
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
-  const features = new API_FEATURE(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .fieldLimiting()
-    .pagination();
-  const tourList = await features.query;
-
-  if (!tourList || tourList.length === 0) {
-    return res.status(404).json({ error: "Tour not found" });
-  }
-  // Send success response with the list of tours
-  res
-    .status(200)
-    .json({ status: "sucess", result: tourList.length, data: { tourList } });
-});
-
-exports.getSingleTour = catchAsync(async (req, res, next) => {
-  // get single tour from DB  and populate the buide field from the DB.
-  const tour = await Tour.findById(req.params.id)
-  // check the avalaibility of the tour
-  if (!tour) {
-    return next(new appError("Tour not found ", 404));
-  }
-  // send sucess response  with the  tour
-  res.status(200).json({ status: "sucess", data: { tour } });
-});
-
-exports.createTour = catchAsync(async (req, res, next) => {
-   const newTour = await Tour.create(req.body);
-  res.status(201).json({ status: "sucess", data: { newTour } });
-  })
-
-exports.updateTour = catchAsync(async (req, res) => {
+exports.allowedUpdat =async (req, res) => {
   // property user can updates
   const allowedUpdates = [
     "name",
@@ -65,29 +31,39 @@ exports.updateTour = catchAsync(async (req, res) => {
   if (!isValid) {
     return res.status(400).json({ error: "Invalid updates" });
   }
+}
+exports.getAllTours = catchAsync(async (req, res, next) => {
+  // EXECUTE QUERY
+  const features = new API_FEATURE(Tour.find(), req.query)
+    .filter()
+    .sort()
+    .fieldLimiting()
+    .pagination();
+  const tourList = await features.query;
 
-  // update tour
-  const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  // check  if the user  is  updating avaliable  tour
-  if (!updatedTour) {
-    return next(new appError("Tour not found ", 404));
+  if (!tourList || tourList.length === 0) {
+    return res.status(404).json({ error: "Tour not found" });
   }
-  // send sucess message with  newly  updated tour
-  res.status(200).json({ status: "sucess", data: { updatedTour } });
+  // Send success response with the list of tours
+  res
+    .status(200)
+    .json({ status: "sucess", result: tourList.length, data: { tourList } });
 });
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  // delete tour  from DB
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  // check if the user is deleteing avaliabnle tour in DB
+
+exports.getSingleTour = catchAsync(async (req, res, next) => {
+  // get single tour from DB  and populate the buide field from the DB.
+  const tour = await Tour.findById(req.params.id).populate("review")
+  // check the avalaibility of the tour
   if (!tour) {
     return next(new appError("Tour not found ", 404));
   }
-  // send  sucess  response  with  null
-  res.status(200).json({ status: "sucess", data: null });
+  // send sucess response  with the  tour
+  res.status(200).json({ status: "sucess", data: { tour } });
 });
+
+exports.createTour=factory.createOne(Tour)
+exports.updateTour=factory.updateOne(Tour)
+ exports.deleteTour=factory.deleteOne(Tour)
 exports.tourStatstics = catchAsync(async (req, res, next) => {
   // get tour stats from DB
   const stats = await Tour.aggregate([

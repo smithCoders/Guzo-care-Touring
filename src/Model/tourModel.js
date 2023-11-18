@@ -66,7 +66,7 @@ const tourSchema = new mongoose.Schema(
     // Geospatail locations
     startLocation: {
       // GeoJSON=
-      type: { type: String, default: "point", enum:["point"] },
+      type: { type: String, default: "point",  },
       // coordinates===lat, long
       coordinates: [Number],
       address: String,
@@ -74,7 +74,7 @@ const tourSchema = new mongoose.Schema(
     },
     locations: [
       {
-        type: { type: String, default: "point", enum:["point"] },
+        type: { type: String, default: "point", },
         coordinates: [Number],
         address: String,
         description: String,

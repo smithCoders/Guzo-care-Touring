@@ -1,8 +1,12 @@
 const Review = require("../Model/ReviewModel");
 const catchAsync = require("../utils/catchAsync");
-
+const factory=require("./handlerFactory")
 exports.getAllReview = catchAsync(async (req, res, next) => {
-  const reviewsList = await Review.find().select("-__v")
+  // displaying reviews of a certain tour.
+  let filter = {};
+  if (req.params.tourId) filter = { tour: req.params.tourId };
+
+  const reviewsList = await Review.find(filter).select("-__v")
   if (!reviewsList || reviewsList.length === 0) {
     res.status(400).json({ status: "failed", error: "review isn't found" });
   }
@@ -12,7 +16,13 @@ exports.getAllReview = catchAsync(async (req, res, next) => {
     data: { reviewsList },
   });
 });
-exports.createReview = catchAsync(async (req, res, next) => {
-  const newReview = await Review.create(req.body);
-  res.status(201).json({ sucess: "sucess", data: { review: newReview } });
-});
+// middleware fun  to  run before  createRview.
+exports.setUserTourId=async(req,res,next)=>{
+ // used  to allow nestedRoutes.
+  if(!req.body.tour)   req.body.tour=req.params.tourId;
+  if(!req.body.user) req.body.user=req.user.id
+}
+exports.createReview =factory.createOne(Review)
+// ADMIN only
+exports.deleteReview=factory.deleteOne(Review)
+exports.updateReview=factory.updateOne(Review)

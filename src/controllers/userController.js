@@ -1,6 +1,7 @@
 const User = require("../Model/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appErrors");
+const factory=require("./handlerFactory")
 const updateObject = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -27,11 +28,7 @@ exports.getSingleUser = catchAsync(async (req, res, next) => {
   }
   res.status(200).json({ sucess: "sucess", data: { user } });
 });
-exports.createUser = catchAsync(async (req, res, next) => {
-  const newUser = User.create(req.body);
-
-  res.status(201).json({ sucess: "sucess", data: { newUser } });
-});
+exports.createUser = factory.createOne(User)
 // exports.updateUser = catchAsync(async (req, res) => {
 //   const allowedUpdates = ["name", "email", "photo"];
 //   const updates = Object.keys(req.body);
@@ -53,6 +50,9 @@ exports.createUser = catchAsync(async (req, res, next) => {
 //   }
 //   res.status(200).json({ sucess: "sucess", data: { updatedUser } });
 // });
+
+
+
 exports.deleteMe = catchAsync(async (req, res, next) => {
   const deletedUser = await User.findByIdAndUpdate(req.user.id, {
     active: false,
@@ -81,3 +81,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   );
   res.status(200).json({ status: "sucess", data: { user: updatedUser } });
 });
+// Admin only
+exports.deleteUser=factory.deleteOne(User);
+exports.updateUser=factory.updateOne(User)
