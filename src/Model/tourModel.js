@@ -22,7 +22,11 @@ const tourSchema = new mongoose.Schema(
     },
     ratingAverage: {
       type: Number,
-      default: 4.5,
+      min:[1,"rating must be   greater than 1"],
+      max:[5.0,"rating must be below  5.0"],
+      // rounding avg  rating value.  the setter  fucntion  run whenever their  is  new  value  is added.
+      set:val=>Math.round(val*10)/10
+   
     },
     ratingQuantity: {
       type: Number,

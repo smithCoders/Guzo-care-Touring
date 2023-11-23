@@ -17,7 +17,7 @@ const createSendToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
     ),
-    // sedn the cookie  to https  header ony
+    // send the cookie  to https  header ony
     // secure: true,
 
     // restrict the cookie  from being accessed or modifeid   by browser(prevent cross site scripting(xss) attacks)
@@ -35,7 +35,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 const validateRole = (role) => {
-  const allowedRoles = ["user", "admin", "lead-guide", "guide"];
+  const allowedRoles = ["user", "admin", "tour-leader", "guide"];
 
   // if (!allowedRoles.includes(role)) {
   //   throw new Error("Invalid role. Please provide a valid role.");
@@ -44,8 +44,7 @@ const validateRole = (role) => {
 
 exports.signUp = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm, role } = req.body;
-
-  // Validate the role
+  // Validate the role.
   validateRole(role);
 
   const newUser = await User.create({
@@ -71,8 +70,6 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new appError("incorrect email or password", 401));
   }
-
-
   createSendToken(user, 200, res);
 });
 exports.protect = catchAsync(async (req, res, next) => {

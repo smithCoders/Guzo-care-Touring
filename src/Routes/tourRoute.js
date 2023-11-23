@@ -9,22 +9,26 @@ router
   .route("/top-5-cheap-tour")
   .get(tourController.aliasTopTours, tourController.getAllTours);
 router.route("/tour-statics").get(tourController.tourStatstics);
-router.route("/monthly-plans/:year").get(tourController.getMonthlyPlan);
+router.route("/monthly-plans/:year").get(authController.protect,
+    authController.restrcitedTo("admin","tour-leader","guide"),tourController.getMonthlyPlan);
 router
   .route("/")
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(authController.protect,
+    authController.restrcitedTo("admin","tour-leader"),
+    tourController.createTour);
 router
   .route("/:id")
   .get(tourController.getSingleTour)
   .patch(authController.protect ,
-     authController.restrcitedTo("admin","lead-guide"),
+     authController.restrcitedTo("admin","tour-leader"),
      tourController.allowedUpdat,
   tourController.updateTour)
   .delete(
     authController.protect,
-    authController.restrcitedTo("admin", "lead-guide"),
+    authController.restrcitedTo("admin", "tour-leader"),
     tourController.deleteTour
   );
-
+// geospataial routes.
+router.route("/tour-within/:distance/center:/latlng/unit:/unit")
 module.exports = router;

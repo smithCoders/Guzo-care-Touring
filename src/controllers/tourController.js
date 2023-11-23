@@ -32,38 +32,6 @@ exports.allowedUpdat =async (req, res) => {
     return res.status(400).json({ error: "Invalid updates" });
   }
 }
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
-  const features = new API_FEATURE(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .fieldLimiting()
-    .pagination();
-  const tourList = await features.query;
-
-  if (!tourList || tourList.length === 0) {
-    return res.status(404).json({ error: "Tour not found" });
-  }
-  // Send success response with the list of tours
-  res
-    .status(200)
-    .json({ status: "sucess", result: tourList.length, data: { tourList } });
-});
-
-exports.getSingleTour = catchAsync(async (req, res, next) => {
-  // get single tour from DB  and populate the buide field from the DB.
-  const tour = await Tour.findById(req.params.id).populate("review")
-  // check the avalaibility of the tour
-  if (!tour) {
-    return next(new appError("Tour not found ", 404));
-  }
-  // send sucess response  with the  tour
-  res.status(200).json({ status: "sucess", data: { tour } });
-});
-
-exports.createTour=factory.createOne(Tour)
-exports.updateTour=factory.updateOne(Tour)
- exports.deleteTour=factory.deleteOne(Tour)
 exports.tourStatstics = catchAsync(async (req, res, next) => {
   // get tour stats from DB
   const stats = await Tour.aggregate([
@@ -124,3 +92,9 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   ]);
   res.status(200).json({ status: "sucess", data: { plan } });
 });
+
+exports.getAllTours = factory.getAll(Tour)
+exports.getSingleTour =factory.getOne(Tour,{path:"review"})
+exports.createTour=factory.createOne(Tour)
+exports.updateTour=factory.updateOne(Tour)
+ exports.deleteTour=factory.deleteOne(Tour)

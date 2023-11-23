@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "user",
+    // enum:["user","admin","guide","tour-leader"]
   },
   password: {
     type: String,
@@ -61,11 +62,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Password encryption middleware
+// Password encryption middleware.
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.passwordChangedAt = Date.now() - 1000;
-
   try {
     this.password = await bcrypt.hash(this.password, 12);
     this.passwordConfirm = undefined;
