@@ -92,6 +92,24 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   ]);
   res.status(200).json({ status: "sucess", data: { plan } });
 });
+exports.getTourWithin=catchAsync(async(req,res,next)=>{
+  // /tour-within/:distance/center:/latlng/unit:/unit
+  // 1. accepting urls from params.
+  const{distance,latlng,unit}=req.params;
+  const[lat,lng]=latlng.split(",");
+  const radius=unit==="mi"? distance/3963.2 : distance/6378.1;
+  if(!lat || !lng){
+    return next(new appError("please provide latitude and longitude in the format lat,lng",400));
+  };
+  const tours=await Tour.find({startLocation:
+    {$geoWithin:{$centerSphere:[[lng,lat],radius]}}});
+  res.status(200).json({
+    status:"sucess",
+    data:{tours}
+  })
+
+
+})
 
 exports.getAllTours = factory.getAll(Tour)
 exports.getSingleTour =factory.getOne(Tour,{path:"review"})

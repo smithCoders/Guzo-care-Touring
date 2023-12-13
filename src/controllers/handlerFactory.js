@@ -43,7 +43,7 @@ exports.updateOne=Model=> catchAsync(async(req,res,next)=>{
   res.status(200).json({ status: "sucess", data: { doc } });
 });
 exports.getAll=Model=>catchAsync(async (req, res, next) => {
- // displaying reviews of a certain tour.
+ 
   let filter = {};
   if (req.params.tourId) filter = { tour: req.params.tourId };
   const features = new API_FEATURE(Model.find(filter), req.query)

@@ -30,5 +30,7 @@ router
     tourController.deleteTour
   );
 // geospataial routes.
-router.route("/tour-within/:distance/center:/latlng/unit:/unit")
+router.route("/tour-within/:distance/center:/latlng/unit:/unit").get(tourController.getTourWithin);
+// tour-within/250/center/40 78/unit/km
+
 module.exports = router;
