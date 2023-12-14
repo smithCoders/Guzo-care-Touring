@@ -97,14 +97,20 @@ exports.getTourWithin=catchAsync(async(req,res,next)=>{
   // 1. accepting urls from params.
   const{distance,latlng,unit}=req.params;
   const[lat,lng]=latlng.split(",");
+  // 3963.2 =earth  raduis  in mile
+  // 6378.1;=earth raduis in km
+  // since mongo expect the radius in spehre  we should  chage the distance in raduius by diving by earth raduis.
   const radius=unit==="mi"? distance/3963.2 : distance/6378.1;
-  if(!lat || !lng){
-    return next(new appError("please provide latitude and longitude in the format lat,lng",400));
-  };
+  // check if the lat and lng are valid
+ if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+  return next(new appError("Please provide valid latitude and longitude in the format lat,lng", 400));
+}
+
   const tours=await Tour.find({startLocation:
     {$geoWithin:{$centerSphere:[[lng,lat],radius]}}});
   res.status(200).json({
     status:"sucess",
+    result:tours.length,
     data:{tours}
   })
 

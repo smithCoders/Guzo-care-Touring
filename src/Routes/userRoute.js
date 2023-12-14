@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
+
+
 router.route("/signup")
 .post(authController.signUp);
 router.route("/login")
@@ -14,7 +16,7 @@ router.route("/resetpassword/:token")
 router.use(authController.protect)
 router
   .route("/updateMe")
-  .patch(userController.updateMe);
+  .patch(userController.uploadImg,userController.updateMe);
   router.route("/me")
   .get( userController.getMe, 
     userController.getSingleUser)

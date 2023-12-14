@@ -1,7 +1,31 @@
 const User = require("../Model/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appErrors");
-const factory=require("./handlerFactory")
+const factory=require("./handlerFactory");
+const multer=require("multer");
+// configuring multer.
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/users");
+  },
+  filename: (req, file, cb) => {
+    const extension = file.mimetype.split("/")[1];
+    cb(null, `user-${req.user?.id}-${Date.now()}.${extension}`);
+  },
+});
+
+const multerFilter=(req,file,cb)=>{
+  // check if the file is image and if that is image pass true else throw an error.
+  if(file.mimetype.startsWith("image")){
+    cb(null,true)
+  }
+  else{
+    cb(new AppError("please upload only image",400),false)
+  }
+}
+const upload=multer({storage:multerStorage, fileFilter:multerFilter});
+exports.uploadImg=upload.single("photo")
+
 const updateObject = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -19,6 +43,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log("file",req.file);
+  console.log("body",req.body)
   // 1.throw error if user try to update password.
   if (req.body.password || req.body.passwordConfirm) {
     next(

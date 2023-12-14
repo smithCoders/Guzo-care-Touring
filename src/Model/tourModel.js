@@ -98,6 +98,9 @@ const tourSchema = new mongoose.Schema(
   //   timestamps: true,
   // }
 );
+// index.
+// for geospatial data the index should be 2dsshepre , since we are dealing with real point on the earth.
+tourSchema.index({startLocation:"2dsphere"})
 // QUERY MIDDLEWARE.
 // tourSchema.pre("save", async function (next) {
 //   const guidePromise = this.guides.map(async (id) => await User.findById(id));
