@@ -38,6 +38,7 @@ router.route("/:id")
 .get(userController.getSingleUser)
 .delete(  userController.deleteUser)
 .patch(userController.updateUser)
+//send email.
 
 
 module.exports = router;

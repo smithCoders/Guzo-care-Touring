@@ -12,16 +12,16 @@ const  sendEmail = catchsync(async (options) => {
             pass: process.env.EMAIL_PASSWORD,
         },
     });
-
-    const { email, subject, template, data } = options;
+    const { email,  template, data } = options;
     const templatePath = path.join(__dirname, `../emails/${template}`);
     const html = await ejs.renderFile(templatePath, data);
 
     const mailOptions = {
         from: process.env.EMAIL_FROM,
         to: email,
-        subject,
-        html
+        html,
+       
+
     }
 
     await transporter.sendMail(mailOptions);

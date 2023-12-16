@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
     },
     // ...
   },
+  subscribeNewsLetter: {
+    type: Boolean,
+    default: false,
+  },
 
   passwordChangedAt: Date,
   passwordResetToken: String,

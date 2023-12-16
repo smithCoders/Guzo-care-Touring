@@ -56,10 +56,20 @@ exports.signUp = catchAsync(async (req, res, next) => {
     role, // Assign the role provided in the request body
   });
   // send welcome email.
-  const data={user:{firstname:newUser.name,email:newUser.email}};
+
+  const url=`${req.protocol}://${req.get("host")}/me`;
+
+  const data = {
+    user: {
+      firstName: newUser.name,
+      email: newUser.email,
+    },
+    url,
+    // Add an unsubscribe link or any other data needed in your email template
+    unsubscribeLink: 'https://example.com/unsubscribe', // Replace with your actual unsubscribe link
+  };
    await sendEmail({
         email: newUser.email,
-        subject: "welcome to your family",
         template: "welcome.ejs",
         data
     });
@@ -157,17 +167,18 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   // 6. Compose the email message.
   const subject = "Password Reset Request";
-  const message =
-    `Dear ${user.name},\n\n` +
-    "We received a request to reset your password. If this wasn't you, please ignore this message.\n\n" +
-    `To reset your password, click the following link (valid for 10 minutes):\n${resetURL}`;
+const data={user:{firstName:user.name,email:user.email},
+resetURL,  
+ unsubscribeLink: 'https://example.com/unsubscribe'}
 
   try {
     // 7. Send the password reset email.
     await sendEmail({
       email: user.email,
       subject,
-      message,
+      data,
+      template:"password_forgot.ejs"
+
     });
 
     // 8. Respond with a success message.
@@ -224,11 +235,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const resetURL = `${req.protocol}://${req.get(
     "host"
   )}/api/v1/users/resetPassword/${hashedToken}`;
-  const message = `Your password has been reset successfully. Please log in again using your new password.\n\n${resetURL}`;
+  const data={user:{firstName:user.name,email:user.email},resetURL,}
   await sendEmail({
     email: user.email,
     subject: "Password Reset Successful",
-    message,
+    data,
+    template:"resetSucesfull.ejs"
+   
   });
   // 8. Send a success response with the new access token.
 

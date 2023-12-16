@@ -8,6 +8,7 @@ const app = express();
 const tourRouter = require("./src/Routes/tourRoute");
 const userRouter = require("./src/Routes/userRoute");
 const reviewRouter = require("./src/Routes/reviewRoute");
+const newsletterRouter = require("./src/Routes/newsLetterRouter");
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
 const appError = require("./src/utils/appErrors");
 // GLOBAL-MIDDLEWARES.
@@ -46,6 +47,7 @@ app.use(
 app.use("/api/v1", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/review", reviewRouter);
+app.use("/api/v1/newsletter", newsletterRouter);
 
 app.all("*", (req, res, next) => {
   // N.B:- if we pass argument to next(), then express knows is is an error and stop all other  middlewares from run
