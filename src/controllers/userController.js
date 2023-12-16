@@ -3,17 +3,19 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appErrors");
 const factory=require("./handlerFactory");
 const multer=require("multer");
-// configuring multer.
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/img/users");
-  },
-  filename: (req, file, cb) => {
-    const extension = file.mimetype.split("/")[1];
-    cb(null, `user-${req.user?.id}-${Date.now()}.${extension}`);
-  },
-});
+const sharp=require("sharp");
 
+// configuring multer.
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/img/users");
+//   },
+//   filename: (req, file, cb) => {
+//     const extension = file.mimetype.split("/")[1];
+//     cb(null, `user-${req.user?.id}-${Date.now()}.${extension}`);
+//   },
+// });
+ const multerStorage=multer.memoryStorage();
 const multerFilter=(req,file,cb)=>{
   // check if the file is image and if that is image pass true else throw an error.
   if(file.mimetype.startsWith("image")){
@@ -24,7 +26,17 @@ const multerFilter=(req,file,cb)=>{
   }
 }
 const upload=multer({storage:multerStorage, fileFilter:multerFilter});
-exports.uploadImg=upload.single("photo")
+exports.uploadImg=upload.single("photo");
+exports.resizeUserImg=catchAsync(async(req,res,next)=>{
+  if(!req.file) return next();
+  req.file.filename=`user-${req.user?.id}-${Date.now()}.jpeg`;
+ await sharp(req.file.buffer).
+  resize(500,500).
+  toFormat("jpeg").
+  jpeg({quality:90}).
+  toFile(`public/img/users/${req.file.filename}`);
+  next();
+})
 
 const updateObject = (obj, ...allowedFields) => {
   const newObj = {};
@@ -43,8 +55,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log("file",req.file);
-  console.log("body",req.body)
   // 1.throw error if user try to update password.
   if (req.body.password || req.body.passwordConfirm) {
     next(
@@ -56,6 +66,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
   //  2. filtered out unallowed  fields to be updated by users.
   const allowedUpdates = updateObject(req.body, "name", "email");
+  // adding the photo  to the user db.
+  if(req.file){
+    allowedUpdates.photo=req.file.filename;
+  }
   // 3.update user document.
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,

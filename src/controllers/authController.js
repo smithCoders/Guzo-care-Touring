@@ -5,6 +5,7 @@ const User = require("../Model/userModel");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appErrors");
 const sendEmail = require("../utils/email");
+
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIREs_IN,
@@ -54,7 +55,16 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm,
     role, // Assign the role provided in the request body
   });
-  createSendToken(newUser, 201, res);
+  // send welcome email.
+  const data={user:{firstname:newUser.name,email:newUser.email}};
+   await sendEmail({
+        email: newUser.email,
+        subject: "welcome to your family",
+        template: "welcome.ejs",
+        data
+    });
+
+createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {

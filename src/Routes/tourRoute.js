@@ -20,10 +20,12 @@ router
 router
   .route("/tours/:id")
   .get(tourController.getSingleTour)
-  .patch(authController.protect ,
+  .patch(authController.protect , 
      authController.restrcitedTo("admin","tour-leader"),
-     tourController.allowedUpdat,
-  tourController.updateTour)
+    //  tourController.allowedUpdat,
+      tourController.uploadTourImage,
+      tourController.resizeTourImg,
+     tourController.updateTour)
   .delete(
     authController.protect,
     authController.restrcitedTo("admin", "tour-leader"),

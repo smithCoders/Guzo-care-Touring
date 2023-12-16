@@ -16,7 +16,9 @@ router.route("/resetpassword/:token")
 router.use(authController.protect)
 router
   .route("/updateMe")
-  .patch(userController.uploadImg,userController.updateMe);
+  .patch(userController.uploadImg,
+    userController.resizeUserImg,
+    userController.updateMe);
   router.route("/me")
   .get( userController.getMe, 
     userController.getSingleUser)

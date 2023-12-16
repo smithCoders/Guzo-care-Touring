@@ -2,7 +2,51 @@ const Tour = require("../Model/tourModel");
 const API_FEATURE = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appErrors");
-const factory=require("./handlerFactory")
+const factory=require("./handlerFactory");
+const multer=require("multer");
+const sharp=require("sharp");
+// save  to memory.
+const multerStorage=multer.memoryStorage();
+const multerFilter=(req,file,cb)=>{
+  if(file.mimetype.startsWith("image")){
+    cb(null,true)
+  }
+  else{
+    cb(new appError("Please upload images only",400))
+  }
+}
+const upload=multer({diskStorage:multerStorage, fileFilter:multerFilter});
+exports.uploadTourImage=upload.
+fields([{name:"imageCover", maxCount:1},{name:"images",maxCount:3}]);
+// if we want to upload multiple images for just one field.
+// upload.array("image",3)
+exports.resizeTourImg=catchAsync(async(req,res,next)=>{
+  if(!req.files.imageCover||!req.files.images) return next();
+ const imageCoverfilename=`tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  // sharp cover image
+ await sharp(req.files.imageCover[0].buffer).
+  resize(2000,1333).
+  toFormat("jpeg").
+  jpeg({quality:90}).
+  toFile(`public/img/tours/${imageCoverfilename}`);
+  // put the cover image on the updated tour.
+  req.body.imageCover=imageCoverfilename;
+  // 2.Images
+  req.body.images=[];
+  await Promise.all(req.files.images.map(async(file,i)=>{
+    const filename=`tour-${req.params.id}-${Date.now()}-${i+1}.jpeg`;
+    await sharp(file.buffer).
+    resize(2000,1333).
+    toFormat("jpeg").
+    jpeg({quality:90}).
+    toFile(`public/img/tours/${filename}`);
+    req.body.images.push(filename);
+  }))
+  next()
+
+})
+
 exports.aliasTopTours = async (req, res, next) => {
   req.query.limit = "5";
   req.query.sort = "price ratingsAverage";
