@@ -9,8 +9,11 @@ const tourRouter = require("./src/Routes/tourRoute");
 const userRouter = require("./src/Routes/userRoute");
 const reviewRouter = require("./src/Routes/reviewRoute");
 const newsletterRouter = require("./src/Routes/newsLetterRouter");
+const bookingRouter=require("./src/Routes/bookingRoute");
+const reservationRouter=require("./src/Routes/reservationRoute")
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
 const appError = require("./src/utils/appErrors");
+
 // GLOBAL-MIDDLEWARES.
 // set Security of HTTP heaers
 app.use(helmet());
@@ -48,6 +51,9 @@ app.use("/api/v1", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/newsletter", newsletterRouter);
+app.use("/api/v1/bookings",bookingRouter);
+app.use("/api/v1/reservation",reservationRouter);
+// app.use("/api/v1/bookings",bookingRouter);
 
 app.all("*", (req, res, next) => {
   // N.B:- if we pass argument to next(), then express knows is is an error and stop all other  middlewares from run

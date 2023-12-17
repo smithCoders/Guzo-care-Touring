@@ -16,12 +16,7 @@ exports.updateOne=Model=> catchAsync(async(req,res,next)=>{
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
-  });
-   // check  if the user  is  updating avaliable  tour
-  if (!doc) {
-    return next(new appError("document  not found ", 404));
-  }
-    // check  if the user  is  updating avaliable  tour
+    });
   if (!doc) {
     return next(new appError("document  not found ", 404));
   }
