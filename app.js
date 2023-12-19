@@ -10,7 +10,9 @@ const userRouter = require("./src/Routes/userRoute");
 const reviewRouter = require("./src/Routes/reviewRoute");
 const newsletterRouter = require("./src/Routes/newsLetterRouter");
 const bookingRouter=require("./src/Routes/bookingRoute");
-const reservationRouter=require("./src/Routes/reservationRoute")
+const reservationRouter=require("./src/Routes/reservationRoute");
+const accomodationRouter=require("./src/Routes/accommodationRoutes");
+const notificationRouter=require("./src/Routes/notificationRoute");
 const errorMiddleware = require("./src/middlewares/errorMiddleware");
 const appError = require("./src/utils/appErrors");
 
@@ -53,6 +55,8 @@ app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/newsletter", newsletterRouter);
 app.use("/api/v1/bookings",bookingRouter);
 app.use("/api/v1/reservation",reservationRouter);
+app.use("/api/v1/accomodation",accomodationRouter);
+app.use("/api/v1/notification",notificationRouter);
 // app.use("/api/v1/bookings",bookingRouter);
 
 app.all("*", (req, res, next) => {

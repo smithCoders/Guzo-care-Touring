@@ -54,6 +54,12 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       required: [true, "tour must have  summary"],
     },
+    maxParticipant:{
+      type:Number,
+      required:[true,"tour must have max number of perticpant"],
+      default:3,
+
+    },
     imageCover: {
       type: String,
       required: [false, "A tour must have a cover image"],
@@ -88,6 +94,7 @@ const tourSchema = new mongoose.Schema(
     ],
     guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
+ 
   {
     // used to show virtual property in  output
     toJSON: { virtuals: true },
