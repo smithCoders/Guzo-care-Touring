@@ -33,6 +33,7 @@
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "pug": "^3.0.2",
+    "redis": "^4.6.12",
     "sharp": "^0.33.0",
     "speakeasy": "^2.0.0",
     "validator": "^13.11.0",

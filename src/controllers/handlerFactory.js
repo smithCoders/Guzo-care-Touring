@@ -1,6 +1,25 @@
 const API_FEATURE = require("../utils/apiFeatures");
 const appError = require("../utils/appErrors");
 const catchAsync = require("../utils/catchAsync");
+const redis=require("redis")
+const client = redis.createClient({
+  legacyMode: true,
+  PORT: 5001
+})
+client.connect().catch(console.error)
+
+client.on('connect', () => {
+  console.log('Connected to Redis');
+});
+
+client.on('error', (err) => {
+  console.error('Redis Error:', err);
+});
+
+client.on('end', () => {
+  console.log('Connection to Redis closed');
+});
+
 
 exports.deleteOne=Model=>catchAsync(async (req, res, next) => {
   // delete doc  from DB
@@ -46,6 +65,17 @@ exports.getAll=Model=>catchAsync(async (req, res, next) => {
     .sort()
     .fieldLimiting()
     .pagination();
+// check if it is avaliable  cache.
+const cachKey="all-data"
+client.get(cachKey,async (err,data)=>{
+  if(err) throw err
+  if(data!==null){
+    console.log("data from cach")
+    res.send(JSON.parse(data))
+  }
+  else{
+    console.log("from Mongodb")
+
   const doc = await features.query;
 
   if (!doc || doc.length === 0) {
@@ -54,4 +84,13 @@ exports.getAll=Model=>catchAsync(async (req, res, next) => {
   res
     .status(200)
     .json({ status: "sucess", result: doc.length, data: { doc } });
+    // cach the data to redis.
+  client.setEx(cachKey,3600,JSON.stringify(doc))
+  }
+  
+
+})
+
+
+
 });
