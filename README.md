@@ -28,9 +28,6 @@ Access detailed API documentation to understand how to interact with the Guzo-ca
 
 Stay tuned for future enhancements and features planned for Guzo-care touring. We are committed to continuously improving the platform.
 
-## Contributing
-
-We welcome contributions from the community. If you'd like to help improve Guzo-care touring, please review our contribution guidelines.
 
 ## Author
 
