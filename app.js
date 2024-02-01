@@ -16,7 +16,7 @@ const errorMiddleware = require("./src/middlewares/errorMiddleware");
 const appError = require("./src/utils/appErrors");
 
 // GLOBAL-MIDDLEWARES.
-// set Security of HTTP heaers
+// set Security of HTTP headers
 app.use(helmet());
 
 // run morgan logging only if the app is on developement server.
@@ -55,10 +55,10 @@ app.use("/api/v1/newsletter", newsletterRouter);
 app.use("/api/v1/bookings",bookingRouter);
 app.use("/api/v1/accomodation",accomodationRouter);
 app.use("/api/v1/notification",notificationRouter);
-// app.use("/api/v1/bookings",bookingRouter);
+
 
 app.all("*", (req, res, next) => {
-  // N.B:- if we pass argument to next(), then express knows is is an error and stop all other  middlewares from run
+  // N.B:- if we pass argument to next(), then express knows it is an error and stop all other  middlewares from run
   next(new appError(`Page not found(${req.originalUrl})`, 404));
 });
 

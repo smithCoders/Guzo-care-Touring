@@ -47,7 +47,7 @@ const updateObject = (obj, ...allowedFields) => {
 };
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  const deletedUser = await User.findByIdAndUpdate(req.user.id, {
+  await User.findByIdAndUpdate(req.user.id, {
     active: false,
   });
 
