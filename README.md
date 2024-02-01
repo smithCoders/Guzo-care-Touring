@@ -1,8 +1,8 @@
 # Guzo-care Touring API
 
-## Overview
+## Overviews
 
-The Guzo-care Touring API is a powerful backend service designed to support a tour management platform. Built with Express.js and Node.js, it offers a comprehensive set of features for managing tours, destinations, user authentication, and more. This API serves as the backbone of the Guzo-care touring platform, enabling users to explore and book tours seamlessly.
+The Guzo-care Touring API is a powerful backend service designed  to support a tour management platform. Built with Express.js and Node.js, it offers a comprehensive set of features for managing tours, destinations, user authentication, and more. This API serves  as the backbone of the Guzo-care touring platform, enabling users to explore and book tours seamlessly.
 
 ## Features
 
@@ -28,9 +28,6 @@ Access detailed API documentation to understand how to interact with the Guzo-ca
 
 Stay tuned for future enhancements and features planned for Guzo-care touring. We are committed to continuously improving the platform.
 
-## Contributing
-
-We welcome contributions from the community. If you'd like to help improve Guzo-care touring, please review our contribution guidelines.
 
 ## Author
 
