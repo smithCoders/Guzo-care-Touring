@@ -24,9 +24,22 @@ Get started with Guzo-care touring by following the installation instructions, w
 
 Access detailed API documentation to understand how to interact with the Guzo-care Touring API effectively.
 
-## Roadmap
+## Dependencies
 
-Stay tuned for future enhancements and features planned for Guzo-care touring. We are committed to continuously improving the platform.
+| Library                 | Version  | Description                                        |
+|-------------------------|----------|----------------------------------------------------|
+| express                 | ^4.18.2  | Web application framework for Node.js              |
+| mongoose                | ^8.0.3   | MongoDB object modeling tool                       |
+| ioredis                 | ^5.3.2   | Redis client with support for promises             |
+| multer                  | ^1.4.5   | Middleware for handling multipart/form-data       |
+| nodemailer              | ^6.9.7   | Send emails from Node.js                          |
+| jwt                     | ^9.0.2   | JSON Web Token implementation       
+| dotenv                  | ^16.3.1  | Loads environment variables from a .env file      |
+| nodemon                 | ^3.0.1  | Monitor for changes in Node.js applications and restart 
+ body-parser             | ^1.20.2  | Parse incoming request bodies in a middleware     |
+| cookie-parser           | ^1.4.6   | Parse Cookie header and populate req.cookies      |
+| express-rate-limit      | ^7.1.5   | Rate limiting middleware for Express apps         |
+| express-session         | ^1.17.3  | Simple session middleware for Express              |
 
 
 ## Author
