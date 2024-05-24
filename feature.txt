@@ -1,0 +1,24 @@
+ Features
+1. User Management:
+- User registration and authentication.
+-User roles (admin, tour operator, customer).
+-Profile management for both customers and operators.
+2. Tour Package Management:
+   - Create, update, and delete tour packages.
+   - Detailed descriptions with itineraries, photos, videos, and maps.
+   - Pricing details and discount options.
+   - Categorization by type, location, duration, and theme.
+   3. Booking System:
+    - Real-time availability check.
+    - Booking and reservation management.
+    - Payment gateway integration for online payments.
+    - Booking confirmation and receipt generation.
+    - Booking cancellation and refund policy management.
+4. Reviews and Ratings:
+   - Allow customers to leave reviews and ratings for tours.
+   - Display average ratings and customer feedback on tour pages.
+
+      -  Automated generation of travel documents ( invoices).
+       - Messaging system for communication between users and tour guides/administrators.
+       - Automated email or SMS notifications for booking confirmations, itinerary updates, payment reminders, etc.
+
